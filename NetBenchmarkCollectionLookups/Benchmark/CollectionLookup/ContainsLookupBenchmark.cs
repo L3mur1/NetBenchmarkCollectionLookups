@@ -14,7 +14,7 @@ namespace NetBenchmarkCollectionLookups.Benchmark.CollectionLookup
         private List<Identity> searchTargets = [];
 
         [Benchmark]
-        public int DictionaryContainsKeyMultiple()
+        public int Contains_Multiple_Dictionary()
         {
             var dictionary = identityList.ToDictionary(x => x.Id);
             int found = 0;
@@ -30,14 +30,13 @@ namespace NetBenchmarkCollectionLookups.Benchmark.CollectionLookup
         }
 
         [Benchmark]
-        public int DictionaryTryGetValueMultiple()
+        public int Contains_Multiple_Dictionary_Precomputed()
         {
-            var dictionary = identityList.ToDictionary(x => x.Id);
             int found = 0;
 
             foreach (var target in searchTargets)
             {
-                if (dictionary.TryGetValue(target.Id, out _))
+                if (precomputedDictionary.ContainsKey(target.Id))
                 {
                     found++;
                 }
@@ -46,7 +45,7 @@ namespace NetBenchmarkCollectionLookups.Benchmark.CollectionLookup
         }
 
         [Benchmark]
-        public int HashSetContainsKeyMultiple()
+        public int Contains_Multiple_HashSet()
         {
             var hashSet = identityList.Select(x => x.Id).ToHashSet();
             int found = 0;
@@ -62,58 +61,74 @@ namespace NetBenchmarkCollectionLookups.Benchmark.CollectionLookup
         }
 
         [Benchmark]
-        public int ListContainsMultiple()
-        {
-            int found = 0;
-
-            foreach (var target in searchTargets)
-            {
-                if (identityList.Any(i => i.Id == target.Id)) // Ensure it compares by Id, not reference
-                {
-                    found++;
-                }
-            }
-            return found;
-        }
-
-        [Benchmark]
-        public int ListFirstOrDefaultMultiple()
-        {
-            int found = 0;
-
-            foreach (var target in searchTargets)
-            {
-                if (identityList.FirstOrDefault(i => i.Id == target.Id) is not null)
-                {
-                    found++;
-                }
-            }
-            return found;
-        }
-
-        [Benchmark]
-        public int Precomputed_DictionaryContainsKeyMultiple()
-        {
-            int found = 0;
-
-            foreach (var target in searchTargets)
-            {
-                if (precomputedDictionary.ContainsKey(target.Id))
-                {
-                    found++;
-                }
-            }
-            return found;
-        }
-
-        [Benchmark]
-        public int Precomputed_HashSetContainsMultiple()
+        public int Contains_Multiple_HashSet_Precomputed()
         {
             int found = 0;
 
             foreach (var target in searchTargets)
             {
                 if (precomputedHashSet.Contains(target.Id))
+                {
+                    found++;
+                }
+            }
+            return found;
+        }
+
+        [Benchmark]
+        public int Contains_Multiple_List()
+        {
+            int found = 0;
+
+            foreach (var target in searchTargets)
+            {
+                if (identityList.Any(i => i.Id == target.Id))
+                {
+                    found++;
+                }
+            }
+            return found;
+        }
+
+        [Benchmark]
+        public int Contains_Multiple_List_Any()
+        {
+            int found = 0;
+
+            foreach (var target in searchTargets)
+            {
+                if (identityList.Any(i => i.Id == target.Id))
+                {
+                    found++;
+                }
+            }
+            return found;
+        }
+
+        [Benchmark]
+        public int Select_Multiple_Dictionary()
+        {
+            var dictionary = identityList.ToDictionary(x => x.Id);
+            int found = 0;
+
+            foreach (var target in searchTargets)
+            {
+                if (dictionary.TryGetValue(target.Id, out _))
+                {
+                    found++;
+                }
+            }
+            return found;
+        }
+
+        [Benchmark]
+        public int Select_Multiple_List_FirstOrDefault()
+        {
+            int found = 0;
+
+            foreach (var target in searchTargets)
+            {
+                if (identityList.FirstOrDefault(i => i.Id == target.Id) is not null)
                 {
                     found++;
                 }
